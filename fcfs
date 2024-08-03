@@ -1,1 +1,95 @@
+#Create List to store number of process,arrival time,Burst time
+nprocess=int(input("Enter the number of processes:"))
+scheduling_algorithm=int(input("Enter the scheduling algorithm to be used:(fcfs(1)/sjf(2)) "))
+
+process=[]
+at=[]
+bt=[]
+
+#Input the required data
+for i in range(nprocess):
+    process.append(i+1)
+    at.append(int(input(f"Enter the arrival time for process{i+1}:")))
+    bt.append(int(input(f"Enter the burst time for process{i+1}:")))
+    #Combine the multiple list
+    process_info=list(zip(process,at,bt,))
+if scheduling_algorithm == 1:
+
+ def fcfs(nprocess,process_info):
+    #Sort the process according to their arrival time
+    process_info.sort(key=lambda x:x[1])
+    process,at,bt=zip(*process_info)
+
+    #Completion Time Calculation
+    ct=[0]*nprocess
+    for i in range(nprocess):
+        if i==0:
+            ct[i]=at[i]+bt[i]
+        else:
+            ct[i]=max(ct[i-1],at[i])+bt[i]
+
+       
+    #Turn Around time Calculation
+    tat=[0]*nprocess
+    for i in range(nprocess):
+        tat[i]=ct[i]-at[i]
+    #Waiting Time Calculation
+    wt=[0]*nprocess
+    for i in range(nprocess):
+        wt[i]=tat[i]-bt[i]
+
+    #Print the table of process,arrival time,burst time,completion time,tat and waiting time
+    print("FCFS Scheduling:")
+    print("Process\tArrivalTime\tBurst Time\tCompletion Time\tTurnaround Time\tWaitingTime")
+    for i in range(nprocess):
+
+        print(f"{process[i]}\t{at[i]}\t\t{bt[i]}\t\t{ct[i]}\t\t{tat[i]}\t\t{wt[i]}")
+    print("\n")
+    fcfs(nprocess,process_info)
+
+elif scheduling_algorithm==2:
+   
+    def sjf(nprocess, process_info):
+        process_info.sort(key=lambda x: x[1])
+        process, at, bt = zip(*process_info)
+        ct = [0] * nprocess
+        completed = [False] * nprocess
+        current_time = 0
+        completed_count = 0
+
+        while completed_count < nprocess:
+            j = -1
+            min_bt = float('inf')
+
+            for i in range(nprocess):
+                if at[i] <= current_time and not completed[i] and bt[i] < min_bt:
+                    min_bt = bt[i]
+                    j = i
+
+            if j != -1:
+                current_time += bt[j]
+                ct[j] = current_time
+                completed[j] = True
+                completed_count += 1
+            else:
+                current_time += 1
+
+        tat = [0] * nprocess
+        wt = [0] * nprocess
+        for i in range(nprocess):
+            tat[i] = ct[i] - at[i]
+            wt[i] = tat[i] - bt[i]
+
+        print("SJF Scheduling:")
+        print("Process\tArrivalTime\tBurst Time\tCompletion Time\tTurnaround Time\tWaitingTime")
+        for i in range(nprocess):
+            print(f"{process[i]}\t{at[i]}\t\t{bt[i]}\t\t{ct[i]}\t\t{tat[i]}\t\t{wt[i]}")
+        print("\n")
+
+    sjf(nprocess, process_info)
+
+else:
+    print("Invalid Algorithm Selected.")
+
+   
 
